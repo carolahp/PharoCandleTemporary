@@ -24,11 +24,6 @@ PCClassBuilder >> beCompiledMethod [
 ]
 
 { #category : #'as yet unclassified' }
-PCClassBuilder >> beImmediate [
-	^ formats := #(immediate)
-]
-
-{ #category : #'as yet unclassified' }
 PCClassBuilder >> bePointers [
 	^ formats := #(#pointers)
 ]
@@ -51,7 +46,6 @@ PCClassBuilder >> beWords [
 { #category : #'as yet unclassified' }
 PCClassBuilder >> build [
 	| metaclass theClass supermetaclass |
-	
 	supermetaclass := superclass
 		ifNil: [ PCClass ]
 		ifNotNil: [ superclass class ].
@@ -108,45 +102,8 @@ PCClassBuilder >> instSize [
 ]
 
 { #category : #'as yet unclassified' }
-PCClassBuilder >> instSpec [
-	"NEW:
-	 0 = 0 sized objects (UndefinedObject True False et al)
-	 1 = non-indexable objects with inst vars (Point et al)
-	 2 = indexable objects with no inst vars (Array et al)
-	 3 = indexable objects with inst vars (MethodContext AdditionalMethodState et al)
-	 4 = weak indexable objects with inst vars (WeakArray et al)
-	 5 = weak non-indexable objects with inst vars (ephemerons) (Ephemeron)
-	 6 = reserved
-	 7 = forwarder format (also immediate class format)
-	 9          64-bit indexable
-	 10 - 11 32-bit indexable
-	 12 - 15 16-bit indexable
-	 16 - 23 byte indexable
-	 24 - 31 compiled method"
-
-	(self isImmediate) ifTrue: [ ^ 7 ].	
-	(self isCompiledMethod) ifTrue: [ ^ 24 ].
-	(self isBytes) ifTrue: [ ^ 16 ].
-	(self isWords) ifTrue: [ ^ 10 ].
-	"(self isEphemeron) ifTrue: [ ^ 5 ]."
-	(self instSize = 0 and: [ self isVariable not ]) ifTrue: [ ^ 0 ].
-	(self instSize > 0 and: [ self isVariable not ]) ifTrue: [ ^ 1 ].
-	(self instSize = 0 and: [ self isVariable     ]) ifTrue: [ ^ 2 ].
-	(self instSize > 0 and: [ self isVariable     ]) ifTrue: [ ^ 3 ].
-	(self instSize > 0 and: [ self isVariable and: [ self isWeak ] ]) ifTrue: [ ^ 4 ].
-	(self instSize > 0 and: [ self isVariable not and: [ self isWeak ] ]) ifTrue: [ ^ 5 ].
-
-	self error: 'illegal old format'
-]
-
-{ #category : #'as yet unclassified' }
 PCClassBuilder >> instVarNames: anArray [
 	instVarNames := anArray
-]
-
-{ #category : #'as yet unclassified' }
-PCClassBuilder >> isBytes [
-	^ formats includes: #bytes
 ]
 
 { #category : #'as yet unclassified' }
@@ -158,12 +115,6 @@ PCClassBuilder >> isCompiledMethod [
 PCClassBuilder >> isCompiledMethodClassIndex [
 	^ (self compactClassIndexFor: name)
 		== (self compactClassIndexFor: #PCCompiledMethod)
-]
-
-{ #category : #'as yet unclassified' }
-PCClassBuilder >> isImmediate [
-
-	^ formats includes: #immediate
 ]
 
 { #category : #'as yet unclassified' }
@@ -193,14 +144,29 @@ PCClassBuilder >> name: aName [
 
 { #category : #'as yet unclassified' }
 PCClassBuilder >> newClassFormat [
+	"<2 bits of size><5 bits of compact class index><4 bits of inst spec><6 bits of size><1 bit with a 0>"
 
-	"A class format is composed by"
-	"<5 bits inst spec><16 bits inst size>"
-	| instSize newInstSpec |
-
-	instSize := self instSize.
-	newInstSpec := self instSpec.
-	^(newInstSpec bitShift: 16) + instSize
+	| size1 instSpec size2 compactClassIndex |
+	size1 := (self instSize + 1) // 64 bitAnd: 16r3.
+	instSpec := self isCompiledMethod
+		ifTrue: [ 12 ]
+		ifFalse: [ self isWeak
+				ifTrue: [ 4 ]
+				ifFalse: [ self isPointers
+						ifTrue: [ self isVariable
+								ifTrue: [ self instSize > 0
+										ifTrue: [ 3 ]
+										ifFalse: [ 2 ] ]
+								ifFalse: [ self instSize > 0
+										ifTrue: [ 1 ]
+										ifFalse: [ 0 ] ] ]
+						ifFalse: [ self isWords
+								ifTrue: [ 6 ]
+								ifFalse: [ 8 ] ] ] ].
+	size2 := (self instSize + 1) \\ 64 bitAnd: 16r3F.
+	compactClassIndex := self compactClassIndex.
+	^ (size1 bitShift: 16) + (compactClassIndex bitShift: 11)
+		+ (instSpec bitShift: 7) + (size2 bitShift: 1)
 ]
 
 { #category : #'as yet unclassified' }

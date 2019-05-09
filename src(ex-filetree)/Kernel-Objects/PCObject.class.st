@@ -1,6 +1,6 @@
 Class {
 	#name : #PCObject,
-	#superclass : #nil,
+	#superclass : 'nil',
 	#category : 'Kernel-Objects'
 }
 

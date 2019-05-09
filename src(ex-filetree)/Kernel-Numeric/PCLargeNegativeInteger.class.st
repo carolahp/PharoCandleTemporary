@@ -7,7 +7,6 @@ Class {
 
 { #category : #'as yet unclassified' }
 PCLargeNegativeInteger >> abs [
-	self asd.
 	^ self negated
 ]
 

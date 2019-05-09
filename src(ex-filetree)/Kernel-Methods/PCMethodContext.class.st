@@ -1,13 +1,12 @@
 Class {
 	#name : #PCMethodContext,
 	#superclass : #PCContext,
-	#type : #variable,
 	#instVars : [
 		'method',
 		'closureOrNil',
 		'receiver'
 	],
-	#category : #'Kernel-Methods'
+	#category : 'Kernel-Methods'
 }
 
 { #category : #'as yet unclassified' }

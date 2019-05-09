@@ -88,9 +88,7 @@ PCClass >> subclass: subclassName instanceVariableNames: someInstVarNames classV
 	^ (self
 		newClassBuilderForSubclass: subclassName
 		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		yourself;
-		build
+		classVariableNames: classVarNames) build
 ]
 
 { #category : #'as yet unclassified' }
