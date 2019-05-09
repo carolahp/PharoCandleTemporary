@@ -24,6 +24,11 @@ PCClassBuilder >> beCompiledMethod [
 ]
 
 { #category : #'as yet unclassified' }
+PCClassBuilder >> beImmediate [
+	^ formats := #(immediate)
+]
+
+{ #category : #'as yet unclassified' }
 PCClassBuilder >> bePointers [
 	^ formats := #(#pointers)
 ]
@@ -118,7 +123,8 @@ PCClassBuilder >> instSpec [
 	 12 - 15 16-bit indexable
 	 16 - 23 byte indexable
 	 24 - 31 compiled method"
-	
+
+	(self isImmediate) ifTrue: [ ^ 7 ].	
 	(self isCompiledMethod) ifTrue: [ ^ 24 ].
 	(self isBytes) ifTrue: [ ^ 16 ].
 	(self isWords) ifTrue: [ ^ 10 ].
@@ -155,6 +161,12 @@ PCClassBuilder >> isCompiledMethodClassIndex [
 ]
 
 { #category : #'as yet unclassified' }
+PCClassBuilder >> isImmediate [
+
+	^ formats includes: #immediate
+]
+
+{ #category : #'as yet unclassified' }
 PCClassBuilder >> isPointers [
 	^ formats includes: #pointers
 ]
@@ -186,10 +198,6 @@ PCClassBuilder >> newClassFormat [
 	"<5 bits inst spec><16 bits inst size>"
 	| instSize newInstSpec |
 
-	(( name = 'PCSmallInteger')
-	 	or: [( name = 'PCCharacter')
-	]) ifTrue:
-		[^ 7 ].
 	instSize := self instSize.
 	newInstSpec := self instSpec.
 	^(newInstSpec bitShift: 16) + instSize

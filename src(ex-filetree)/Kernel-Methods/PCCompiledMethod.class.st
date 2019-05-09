@@ -39,7 +39,8 @@ PCCompiledMethod >> isCompiledMethod [
 PCCompiledMethod >> numLiterals [
 	"Answer the number of literals used by the receiver."
 
-	^ (self header bitShift: -9) bitAnd: 16rFF
+	"^ (self header bitShift: -9) bitAnd: 16rFF"
+	^ self header bitAnd: 16r7FFF
 ]
 
 { #category : #'as yet unclassified' }

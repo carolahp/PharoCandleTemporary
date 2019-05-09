@@ -1,12 +1,13 @@
 Class {
 	#name : #PCContext,
 	#superclass : #PCObject,
+	#type : #variable,
 	#instVars : [
 		'sender',
 		'pc',
 		'stackp'
 	],
-	#category : 'Kernel-Methods'
+	#category : #'Kernel-Methods'
 }
 
 { #category : #'as yet unclassified' }

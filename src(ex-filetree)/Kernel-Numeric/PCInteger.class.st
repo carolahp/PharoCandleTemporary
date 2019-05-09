@@ -150,7 +150,6 @@ PCInteger >> asCharacter [
 PCInteger >> asFloat [
 	"Answer a Float that represents the value of the receiver.
 	Optimized to process only the significant digits of a LargeInteger."
-
 	| sum firstByte shift |
 	shift := 0.
 	sum := 0.

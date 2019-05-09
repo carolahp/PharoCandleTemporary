@@ -15,6 +15,7 @@ PCArray >> asArray [
 { #category : #'as yet unclassified' }
 PCArray >> asDictionary [
 	| dictionary |
+
 	dictionary := PCDictionary new.
 	self do: [ :each | dictionary add: each ].
 	^ dictionary
