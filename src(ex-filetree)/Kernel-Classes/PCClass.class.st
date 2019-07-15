@@ -29,6 +29,16 @@ PCClass >> classVariables: aDictionary [
 ]
 
 { #category : #'as yet unclassified' }
+PCClass >> immediateSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
+	^ (self
+		newClassBuilderForSubclass: subclassName
+		instanceVariableNames: someInstVarNames
+		classVariableNames: classVarNames)
+		beImmediate;
+		build
+]
+
+{ #category : #'as yet unclassified' }
 PCClass >> initFrom: aPharoClass methodDict: newMethodDict [
 	"Fill in my instance variables from the given Class using the given MethodDictionary."
 

@@ -1,7 +1,8 @@
 Class {
 	#name : #PCSmallInteger,
 	#superclass : #PCInteger,
-	#category : 'Kernel-Numeric'
+	#type : #immediate,
+	#category : #'Kernel-Numeric'
 }
 
 { #category : #'as yet unclassified' }
