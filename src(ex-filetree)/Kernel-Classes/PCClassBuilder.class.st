@@ -125,9 +125,9 @@ PCClassBuilder >> instSpec [
 	 24 - 31 compiled method"
 
 	(self isImmediate) ifTrue: [ ^ 7 ].	
+	(self isCompiledMethod) ifTrue: [ ^ 24 ].
 	(self isBytes) ifTrue: [ ^ 16 ].
 	(self isWords) ifTrue: [ ^ 10 ].
-	(self isCompiledMethod) ifTrue: [ ^ 24 ].
 	"(self isEphemeron) ifTrue: [ ^ 5 ]."
 	(self instSize = 0 and: [ self isVariable not ]) ifTrue: [ ^ 0 ].
 	(self instSize > 0 and: [ self isVariable not ]) ifTrue: [ ^ 1 ].
